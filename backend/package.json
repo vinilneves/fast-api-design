@@ -1,0 +1,10 @@
+{
+  "name": "fast-api-design",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.1",
+    "yaml": "^2.1.1"
+  }
+}
