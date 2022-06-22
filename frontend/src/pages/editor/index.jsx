@@ -17,13 +17,14 @@ const Row = styled.div`
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: center;
-  align-items: center;
   gap: 1px;
   background: grey;
+  width: ${props => props.width || 'inherit' };
+  margin: 0 auto;
 `
 
 const Column = styled.div`
-  flex-grow: 1;
+  flex-grow: ${props => props.flexGrow || 1 };
 `
 
 const Message = styled.div`
@@ -76,34 +77,53 @@ const Editor = (props) => {
                 <SuccessMessage>YAML Válido.</SuccessMessage> :
                 <ErrorMessage>YAML Inválido.</ErrorMessage>
             }
-            <Row>
+            <Row width='90%'>
                 <Column>
+                    <div style={{ fontWeight: 'bold', background: '#282c34', color: 'white', fontSize: '1.5em' }}>
+                        Definições
+                    </div>
                     <ReactAce
-                        width='100%'
-                        value={editorContent}
-                        onChange={onEditorContentChange}
-                        mode='yaml'
-                        theme='one_dark'
-
+                      width='100%'
+                      height='100%'
+                      value={editorContent}
+                      onChange={onEditorContentChange}
+                      mode='yaml'
+                      theme='one_dark'
                     />
                 </Column>
                 <Column>
-                    <ReactAce
-                        width='100%'
-                        value={JSON.stringify(requests, null, 4)}
-                        mode='json'
-                        theme='github'
-                        readOnly={true}
-                    />
-                </Column>
-                <Column>
-                    <ReactAce
-                        width='100%'
-                        value={JSON.stringify(requests, null, 4)}
-                        mode='json'
-                        theme='github'
-                        readOnly={true}
-                    />
+                    <div style={{ fontWeight: 'bold', background: 'white', color: '#282c34', fontSize: '1.5em' }}>
+                        Requests
+                    </div>
+                    { requests?.requests && requests.requests.map(request => (
+                        <Row style={{ borderBottom: '1px solid gray' }}>
+                            <Column>
+                                <div style={{ textAlign: 'left', background: 'white', padding: '2em' }}>
+                                    <h1>{ request.method }</h1>
+                                    <h2>{ request.path }</h2>
+                                    { request?.samples && request.samples.map(sample => (
+                                      <>
+                                          <h3>{ sample.name }</h3>
+                                          <h4>{ sample.description }</h4>
+                                          <h3>{ JSON.stringify(sample.headers) }</h3>
+                                          <h3>Headers</h3>
+                                          { sample.headers && Object.keys(sample.headers).map(header => (
+                                            <p><pre>{ sample.headers[header] }</pre></p>
+                                          )) }
+                                          <h3>Params</h3>
+                                          { sample.params && (
+                                            <p><pre>{ JSON.stringify(sample.params, null, 2) }</pre></p>
+                                          ) }
+                                          <h3>Response</h3>
+                                          { sample.response && (
+                                            <p><pre>{ JSON.stringify(sample.response, null, 2) }</pre></p>
+                                          ) }
+                                      </>
+                                    )) }
+                                </div>
+                            </Column>
+                        </Row>
+                    )) }
                 </Column>
             </Row>
         </>
